@@ -1,8 +1,9 @@
 # HashiCraft Minecraft Server
 
 ![](./images/hashicraft_logo.png)
+This repo is forked from HashiCraft/Docker-Minecraft-Server to host a vanilla minecraft server.
 
-This repository contains a Minecraft server with the Forge modding tools installed for Docker. Docker containers are immutable instances therfore any changes
+This repository contains a vanilla Minecraft server installed for Docker. Docker containers are immutable instances therfore any changes
 you make to your Server across restarts will be lost. To save the state of your ensure the following container volumes are mapped to a local folder:
 
 * /minecraft/world - Main world save data
