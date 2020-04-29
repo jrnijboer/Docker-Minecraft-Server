@@ -16,21 +16,6 @@ if [ "${WORLD_BACKUP}" != "" ]; then
   fi
 fi
 
-if [ "${MODS_BACKUP}" != "" ]; then 
-  if [ ! "$(ls -A /minecraft/mods)" ]; then 
-    echo "Installing default mods ${MODS_BACKUP}"
-    
-    if [ ! -d "/minecraft/mods" ]; then
-      mkdir /minecraft/mods
-    fi
-
-    cd /tmp && \
-      wget -O mods.tar.gz ${MODS_BACKUP} && \
-      tar -C /minecraft/mods -xzf mods.tar.gz --strip 1 && \
-      rm mods.tar.gz
-  fi
-fi
-
 # Add config items which are in the main minecraft folder from config so that 
 # they can persist across launches
 if [ ! -d "/minecraft/config" ]; then
@@ -64,4 +49,4 @@ eval "echo \"$(cat /server.properties)\"" > /minecraft/server.properties
 
 # Start the server
 cd /minecraft
-java -Xmx${JAVA_MEMORY} -Xms${JAVA_MEMORY} -Dfml.queryResult=confirm -jar forge-1.12.2-14.23.5.2768-universal.jar nogui
+java -Xmx${JAVA_MEMORY} -Xms${JAVA_MEMORY} -Dfml.queryResult=confirm -jar server.jar nogui
