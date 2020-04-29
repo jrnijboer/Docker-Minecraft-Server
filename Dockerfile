@@ -1,8 +1,8 @@
-FROM openjdk:8-slim
+FROM openjdk:15-slim
 
 WORKDIR /minecraft
 
-RUN apt-get update && apt-get install -y wget
+RUN apt-get update && apt-get install -y wget jq curl
 
 # Install rcon
 RUN wget https://github.com/itzg/rcon-cli/releases/download/1.4.7/rcon-cli_1.4.7_linux_amd64.tar.gz && \
@@ -10,11 +10,11 @@ RUN wget https://github.com/itzg/rcon-cli/releases/download/1.4.7/rcon-cli_1.4.7
   rm rcon-cli_1.4.7_linux_amd64.tar.gz && \
   mv rcon-cli /usr/local/bin
 
-# Setup the server
-RUN wget https://github.com/nicholasjackson/mc/releases/download/v0.0.0/forge-1.12.2-14.23.5.2768-installer.tar.gz && \
-  tar -xzf forge-1.12.2-14.23.5.2768-installer.tar.gz && \
-  rm forge-1.12.2-14.23.5.2768-installer.tar.gz && \
-  java -jar forge-1.12.2-14.23.5.2768-installer.jar --installServer
+# Download the server
+RUN latest=$(curl https://launchermeta.mojang.com/mc/game/version_manifest.json |jq '.latest.release') && \
+versionmeta=$(curl https://launchermeta.mojang.com/mc/game/version_manifest.json |jq '.versions[] |select (.id == '"$latest"') |.url' | tr -d '"') && \
+serverjar=$(curl $versionmeta |jq '.downloads.server.url' |tr -d '"') && \
+wget $serverjar
 
 # Copy the signed eula
 COPY ./eula.txt eula.txt
@@ -26,9 +26,9 @@ COPY ./server.properties /server.properties
 # Set defaults for environment variables
 ENV MINECRAFT_PORT 25565
 ENV RCON_PORT 27015
-ENV JAVA_MEMORY 1G
-ENV RCON_ENABLED false
+ENV JAVA_MEMORY 2G
+ENV RCON_ENABLED true
 ENV WHITELIST_ENABLED true
-ENV ALLOW_NETHER false
+ENV ALLOW_NETHER true
 
 ENTRYPOINT [ "/minecraft/entrypoint.sh" ]
