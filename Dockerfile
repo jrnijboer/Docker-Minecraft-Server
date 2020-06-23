@@ -11,10 +11,12 @@ RUN wget https://github.com/itzg/rcon-cli/releases/download/1.4.7/rcon-cli_1.4.7
   mv rcon-cli /usr/local/bin
 
 # Download the server
-RUN latest=$(curl https://launchermeta.mojang.com/mc/game/version_manifest.json |jq '.latest.release') && \
-versionmeta=$(curl https://launchermeta.mojang.com/mc/game/version_manifest.json |jq '.versions[] |select (.id == '"$latest"') |.url' | tr -d '"') && \
-serverjar=$(curl $versionmeta |jq '.downloads.server.url' |tr -d '"') && \
-wget $serverjar
+RUN MINECRAFT_VERSION=$(curl https://launchermeta.mojang.com/mc/game/version_manifest.json |jq '.latest.release') && \
+#or uncomment to get specific version
+    #MINECRAFT_VERSION='"1.15.2"' && \
+    versionmeta=$(curl https://launchermeta.mojang.com/mc/game/version_manifest.json |jq '.versions[] |select (.id == '"$MINECRAFT_VERSION"') |.url' | tr -d '"') && \
+    serverjar=$(curl $versionmeta |jq '.downloads.server.url' |tr -d '"') && \
+    wget $serverjar
 
 # Copy the signed eula
 COPY ./eula.txt eula.txt
